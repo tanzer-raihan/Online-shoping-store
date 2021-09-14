@@ -7,20 +7,30 @@ const loadProducts = () => {
 
 // show all product in UI 
 const showProducts = (products) => {
+
   const allProducts = products.map((pd) => pd);
+  console.log(allProducts)
   for (const product of allProducts) {
-    const image = product.images;
+    const image = product.image;
     const div = document.createElement("div");
     div.classList.add("product");
     div.innerHTML = `<div class="single-product">
+    
       <div>
-    <img class="product-image" src=${image}></img>
+    <img class="product-image " src=${image}></img>
       </div>
       <h3>${product.title}</h3>
       <p>Category: ${product.category}</p>
+      <p>
+      <small class="mx-2 fw-bold">Rate:${product.rating.rate}</small>
+      <small class="mx-2 fw-bold">Count:${product.rating.count}</small>
+      </p>
+      
       <h2>Price: $ ${product.price}</h2>
-      <button onclick="addToCart(${product.id},${product.price})" id="addToCart-btn" class="buy-now btn btn-success">add to cart</button>
-      <button id="details-btn" class="btn btn-danger">Details</button></div>
+      <button onclick="addToCart(${product.id},${product.price})" id="addToCart-btn" class="buy-now btn text-white">Add to cart</button>
+      <button type=''button onclick='getDetails(${product.id})' id="details-btn" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Details</button></div>
+
+
       `;
     document.getElementById("all-products").appendChild(div);
   }
@@ -28,29 +38,37 @@ const showProducts = (products) => {
 let count = 0;
 const addToCart = (id, price) => {
   count = count + 1;
+
   updatePrice("price", price);
 
   updateTaxAndCharge();
+  updateTotal();
   document.getElementById("total-Products").innerText = count;
+
 };
 
 const getInputValue = (id) => {
   const element = document.getElementById(id).innerText;
-  const converted = parseInt(element);
+  const converted = parseFloat(element);
   return converted;
 };
 
 // main price update function
 const updatePrice = (id, value) => {
+
   const convertedOldPrice = getInputValue(id);
+
+
   const convertPrice = parseFloat(value);
+
   const total = convertedOldPrice + convertPrice;
-  document.getElementById(id).innerText = Math.round(total);
+  document.getElementById(id).innerText = total.toFixed(2);
 };
 
 // set innerText function
 const setInnerText = (id, value) => {
-  document.getElementById(id).innerText = Math.round(value);
+  const fixedValue = value.toFixed(2);
+  document.getElementById(id).innerText = fixedValue;
 };
 
 // update delivery charge and total Tax
@@ -75,6 +93,41 @@ const updateTotal = () => {
   const grandTotal =
     getInputValue("price") + getInputValue("delivery-charge") +
     getInputValue("total-tax");
-  document.getElementById("total").innerText = grandTotal;
+
+  document.getElementById("total").innerText = grandTotal.toFixed(2);
 };
 loadProducts();
+const getDetails = id => {
+  document.getElementById('details').textContent = '';
+  const url = `https://fakestoreapi.com/products/${id}`
+  console.log(url);
+  fetch(url)
+    .then(res => res.json())
+    .then(data => displayDetails(data))
+}
+const displayDetails = data => {
+
+
+  const container = document.getElementById('details');
+  const div = document.createElement('div');
+  div.innerHTML = `<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="${data.image}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">${data.category}</h5>
+        <p class="card-text">${data.description}</p>
+        <button type="button" class="btn btn-success btn-sm">Buy Now</button>
+        <button onclick=cancel() type="button" class="btn btn-danger btn-sm">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>`
+  container.appendChild(div);
+
+}
+const cancel = () => {
+  document.getElementById('details').textContent = '';
+}
