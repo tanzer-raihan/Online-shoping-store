@@ -1,6 +1,7 @@
 body {
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
+  
 }
 
 #all-products {
@@ -17,11 +18,13 @@ body {
   padding: 10px;
   transition: 0.5s;
   
+  
 }
 .single-product:hover {
   box-shadow: 4px 4px 7px gray;
   border-radius: 10px;
-  border: 1px solid cyan;
+  border: 1px solid grey;
+  background-color:rgba(250, 235, 215, 0.637);
 }
 .product-image {
   width: 150px;
